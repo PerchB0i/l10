@@ -20,7 +20,9 @@ public class ImageProcessor {
         for (int x = 0; x <= this.image.getWidth(); x++) {
             for (int y = 0; 0 <= this.image.getHeight(); y++)
             {
-                this.image.setRGB(x, y, brightenPixel(this.image.getRGB(x, y), v));
+                int pixel = image.getRGB(x, y);
+                pixel = brightenPixel(pixel, v);
+                image.setRGB(x, y, pixel);
             }
         }
     }
@@ -30,11 +32,7 @@ public class ImageProcessor {
         int green = checkColor(((pixel >> 8)&255),factor);
         int red = checkColor(((pixel >> 16)&255),factor);
 
-        int newPixel = red;
-        newPixel = (newPixel << 8) + green;
-        newPixel = (newPixel << 8) + blue;
-
-        return newPixel;
+        return blue + (green << 8) + (red << 16);
     }
 
     private int checkColor(int color, int factor) {
