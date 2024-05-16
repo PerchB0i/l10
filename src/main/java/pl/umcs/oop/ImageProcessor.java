@@ -16,28 +16,33 @@ public class ImageProcessor {
         ImageIO.write(this.image, "png", new File(path));
     }
 
-    public void setBrightness(int v) {
-        for (int x = 0; x <= this.image.getWidth(); x++) {
-            for (int y = 0; 0 <= this.image.getHeight(); y++)
-            {
+    public void increaseBrightness(int factor) {
+        for(int x = 0 ; x < image.getHeight() ; x++) {
+            for(int y = 0 ; y < image.getWidth() ; y++) {
                 int pixel = image.getRGB(x, y);
-                pixel = brightenPixel(pixel, v);
+                pixel = brightenPixel(pixel, factor);
                 image.setRGB(x, y, pixel);
             }
         }
     }
 
     private int brightenPixel(int pixel, int factor) {
-        int blue = checkColor((pixel&255),factor);
-        int green = checkColor(((pixel >> 8)&255),factor);
-        int red = checkColor(((pixel >> 16)&255),factor);
-
+        int mask = 255;
+        int blue = pixel & mask;
+        int green = (pixel >> 8) & mask;
+        int red = (pixel >> 16) & mask;
+        blue = brightenPixelPart(blue, factor);
+        green = brightenPixelPart(green, factor);
+        red = brightenPixelPart(red, factor);
         return blue + (green << 8) + (red << 16);
     }
 
-    private int checkColor(int color, int factor) {
-        if ((color + factor) > 255)
+    private int brightenPixelPart(int color, int factor) {
+        color += factor;
+        if(color > 255) {
             return 255;
-        return color+factor;
+        } else {
+            return color;
+        }
     }
 }
