@@ -9,52 +9,59 @@ public class ImageProcessor {
     private BufferedImage image;
 
     public void loadImage(String path) throws IOException {
-        this.image = ImageIO.read(new File(path));
+        File file = new File(path);
+        image = ImageIO.read(file);
+
+//        image.getWidth()
+//        int pixel = image.getRGB(0,0);
+//        image.setRGB(0,0,20);
     }
 
     public void saveImage(String path) throws IOException {
-        ImageIO.write(this.image, "png", new File(path));
+        File file = new File(path);
+        ImageIO.write(image, "jpg", file);
     }
 
     public void increaseBrightness(int factor) {
-        for(int x = 0 ; x < image.getHeight() ; x++) {
-            for(int y = 0 ; y < image.getWidth() ; y++) {
+        for(int x = 0 ; x < image.getWidth(); x++) {
+            for(int y = 0 ; y < image.getHeight(); y++) {
                 int pixel = image.getRGB(x, y);
                 pixel = brightenPixel(pixel, factor);
                 image.setRGB(x, y, pixel);
             }
         }
+
+
     }
-
     public void increaseBrightnessThreads(int factor) throws InterruptedException {
-        int ammountOfThreads = Runtime.getRuntime().availableProcessors();
-        Thread threads[] = new Thread[ammountOfThreads];
-        for (int i = 0; i < threads.length; i++)
+        int availableProcessors = Runtime.getRuntime().availableProcessors();
+        Thread threads[] = new Thread[availableProcessors];
+        for(int i = 0; i < threads.length; i++)
         {
-            final int tmp = i;
-            threads[i] = new Thread(
-                    () -> {
-                        int start = image.getHeight() / ammountOfThreads;
-                        start *= tmp;
-                        int end = start + image.getHeight() / ammountOfThreads;
-                        if (tmp == threads.length - 1)
-                            end = image.getHeight();
-
-                        for (int x = start; x < end; x++) {
-                            for (int y = 0; y < image.getWidth(); y++) {
-                                int pixel = image.getRGB(x, y);
-                                pixel = brightenPixel(pixel, factor);
-                                image.setRGB(x, y, pixel);
-                            }
-                        }
+            final int finalI = i;
+            threads[i] = new Thread(() -> {
+                int start = image.getHeight() / availableProcessors * finalI;
+                int end = start + image.getHeight() / availableProcessors;
+                if(finalI == availableProcessors - 1)
+                {
+                    end = image.getHeight();
+                }
+                for(int x = 0 ; x < image.getWidth() ; x++) {
+                    for(int y = start ; y < end ; y++) {
+                        int pixel = image.getRGB(x, y);
+                        pixel = brightenPixel(pixel, factor);
+                        image.setRGB(x, y, pixel);
                     }
-            );
+                }
+            });
             threads[i].start();
-
         }
-        for (int i = 0; i < ammountOfThreads; i++) {
+        for(int i = 0; i < threads.length; i++)
+        {
             threads[i].join();
         }
+
+
 
     }
 

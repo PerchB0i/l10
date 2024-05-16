@@ -8,9 +8,9 @@ public class Main {
 
         try {
             long start = System.currentTimeMillis();
-            ip.loadImage("image.png");
+            ip.loadImage("test.jpg");
             ip.increaseBrightness(40);
-            ip.saveImage("image2.png");
+            ip.saveImage("test2.jpg");
             System.out.println(System.currentTimeMillis() - start);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -18,9 +18,9 @@ public class Main {
 
         try {
             long start = System.currentTimeMillis();
-            ip.loadImage("image.png");
+            ip.loadImage("test.jpg");
             ip.increaseBrightnessThreads(-2137);
-            ip.saveImage("image3.png");
+            ip.saveImage("test3.jpg");
             System.out.println(System.currentTimeMillis() - start);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
